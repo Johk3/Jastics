@@ -27,7 +27,10 @@ func Run(input string, output string) map[int]int {
 
 	_result := reflect.ValueOf(result)
 	for i := 0; i < _result.Len(); i++ {
-		fmt.Println(_result.Index(i))
+		for _, e := range _result.MapKeys() {
+			v := _result.MapIndex(e)
+			fmt.Println(v)
+		}
 		break
 	}
 

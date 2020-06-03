@@ -4,19 +4,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"log"
+	"os"
 	"reflect"
+	"strconv"
 )
 
 
 type Feedback struct {
-	ratios []int
+	ratios []float64
 	text []string
 }
 
-func (f *Feedback) AppendRatios(ratios []int) {
-	f.ratios = append(f.ratios, ratios...)
+func (f *Feedback) AppendRatios(ratios float64) {
+	f.ratios = append(f.ratios, ratios)
 }
 
 func (f *Feedback) AppendText(text string) {
@@ -52,13 +53,21 @@ func Run(input string, output string) *Feedback {
 						modelF.AppendText(v.Elem().MapIndex(f).String())
 					}
 					if f.String() == "ratios" {
-						fmt.Println(v.Elem().MapIndex(f))
+						for z := 0; z < v.Elem().MapIndex(f).Elem().Len(); z++ {
+							ratioS := v.Elem().MapIndex(f).Elem().Index(z).Elem().String()
+							if ratioS == "<float64 Value>" {
+								modelF.AppendRatios(v.Elem().MapIndex(f).Elem().Index(z).Elem().Float())
+							} else {
+								if s, err := strconv.ParseFloat(ratioS, 64); err == nil {
+									modelF.AppendRatios(s)
+								}
+							}
+						}
 					}
 				}
 			}
 		}
 		fmt.Printf("%d/%d\n", i, _result.Len())
-		break
 	}
 
 	return &modelF

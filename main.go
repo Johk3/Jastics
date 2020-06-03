@@ -15,6 +15,6 @@ func main() {
 	output := "/tmp/Jastics/"
 	fmt.Println("Starting...")
 
-	results := fetch.Run(input, output)
-	fmt.Println(results)
+	fetch.Run(input, output)
+	fmt.Println("Complete!")
 }

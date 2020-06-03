@@ -27,7 +27,7 @@ func (f *Feedback) AppendText(text string) {
 // -- -- --
 
 
-func Run(input string, output string) *Feedback {
+func Run(input string, output string) {
 	modelF := Feedback{}
 
 	fmt.Printf("Statistically analyzing %v, and dumping to %v\n", input, output)
@@ -50,7 +50,7 @@ func Run(input string, output string) *Feedback {
 				v := _result.Index(i).Elem().MapIndex(e)
 				for _, f := range v.Elem().MapKeys() {
 					if f.String() == "mainFormText" {
-						modelF.AppendText(v.Elem().MapIndex(f).String())
+						modelF.AppendText(v.Elem().MapIndex(f).Elem().String())
 					}
 					if f.String() == "ratios" {
 						for z := 0; z < v.Elem().MapIndex(f).Elem().Len(); z++ {
@@ -70,7 +70,32 @@ func Run(input string, output string) *Feedback {
 		fmt.Printf("%d/%d\n", i, _result.Len())
 	}
 
-	return &modelF
+	// Output feedback, for python sentiment analysis
+	writeSentiments(&modelF)
+}
+
+func analyzeRatios() {
+	fmt.Println("Progress")
+}
+
+func writeSentiments(m *Feedback) {
+	fmt.Println("Writing down sentiments for python...")
+
+	feedbackPath := "/tmp/jm_feedback"
+	var bytes int
+	f, err := os.Create(feedbackPath)
+	check(err)
+
+	defer f.Close()
+
+	for _, text := range m.text {
+		n3, err := f.WriteString(text + "-+--++--+-+--++--+--+-+--+")
+		check(err)
+		bytes += n3
+	}
+	f.Sync()
+
+	fmt.Printf("Wrote %d bytes\n", bytes)
 }
 
 func check(err error) {

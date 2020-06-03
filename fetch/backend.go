@@ -72,10 +72,22 @@ func Run(input string, output string) {
 
 	// Output feedback, for python sentiment analysis
 	writeSentiments(&modelF)
+
+	// Analyze the statistical data of ratios, and graph them
+	analyzeRatios(&modelF)
 }
 
-func analyzeRatios() {
-	fmt.Println("Progress")
+func analyzeRatios(m *Feedback) {
+	var meanAverage int
+
+	for n := range m.ratios {
+		meanAverage += n
+	}
+	meanAverage = meanAverage/len(m.ratios)
+	// Convert to percentages
+	meanAverage = meanAverage/5
+
+	fmt.Printf("User experience ranges from 100-500\nThe average user experience was: %d%%\n", meanAverage)
 }
 
 func writeSentiments(m *Feedback) {

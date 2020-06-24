@@ -1,11 +1,10 @@
 package fetch
 
 import (
-	"bytes"
+	"net/http"
 	"encoding/json"
 	"fmt"
 	"github.com/wcharczuk/go-chart" //exposes "chart"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -78,6 +77,25 @@ func Run(input string, output string) {
 
 	// Analyze the statistical data of ratios, and graph them
 	analyzeRatios(&modelF)
+
+	// Serving the graph through the web
+	fmt.Println("Serving on port 8080...")
+	http.HandleFunc("/", fetchGraph)
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func fetchGraph (res http.ResponseWriter, req *http.Request) {
+	graph := chart.Chart{
+		Series: []chart.Series{
+			chart.ContinuousSeries{
+				XValues: []float64{1.0, 2.0, 3.0, 4.0, 5.0},
+				YValues: []float64{1.0, 2.0, 3.0, 4.0, 5.0},
+			},
+		},
+	}
+
+	res.Header().Set("Content-Type", "image/png")
+	graph.Render(chart.PNG, res)
 }
 
 func analyzeRatios(m *Feedback) {
@@ -91,20 +109,6 @@ func analyzeRatios(m *Feedback) {
 	meanAverage = meanAverage/5
 
 	fmt.Printf("User experience ranges from 100-500\nThe average user experience was: %d%%\n", meanAverage)
-
-	// Plotting graphs of the feedback data
-	graph := chart.Chart{
-		Series: []chart.Series{
-			chart.ContinuousSeries{
-				XValues: []float64{1.0, 2.0, 3.0, 4.0},
-				YValues: []float64{1.0, 2.0, 3.0, 4.0},
-			},
-		},
-	}
-
-	buffer := bytes.NewBuffer([]byte{})
-	err := graph.Render(chart.PNG, buffer)
-	check(err)
 }
 
 func writeSentiments(m *Feedback) {

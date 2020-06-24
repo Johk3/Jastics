@@ -1,8 +1,11 @@
 package fetch
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/wcharczuk/go-chart" //exposes "chart"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -78,8 +81,8 @@ func Run(input string, output string) {
 }
 
 func analyzeRatios(m *Feedback) {
+	// Measuring the average of the user experiences
 	var meanAverage int
-
 	for n := range m.ratios {
 		meanAverage += n
 	}
@@ -88,6 +91,20 @@ func analyzeRatios(m *Feedback) {
 	meanAverage = meanAverage/5
 
 	fmt.Printf("User experience ranges from 100-500\nThe average user experience was: %d%%\n", meanAverage)
+
+	// Plotting graphs of the feedback data
+	graph := chart.Chart{
+		Series: []chart.Series{
+			chart.ContinuousSeries{
+				XValues: []float64{1.0, 2.0, 3.0, 4.0},
+				YValues: []float64{1.0, 2.0, 3.0, 4.0},
+			},
+		},
+	}
+
+	buffer := bytes.NewBuffer([]byte{})
+	err := graph.Render(chart.PNG, buffer)
+	check(err)
 }
 
 func writeSentiments(m *Feedback) {

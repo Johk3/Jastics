@@ -80,7 +80,7 @@ func Run(input string, output string) {
 
 	// Serving the graph through the web
 	fmt.Println("Serving on port 8080...")
-	http.HandleFunc("/", fetchGraph)
+	http.HandleFunc("/alpha", fetchGraph)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 

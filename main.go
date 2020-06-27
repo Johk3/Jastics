@@ -7,6 +7,7 @@ import(
 
 
 func main() {
+  // Test
 	// This program is mainly used to analyze, and create graphs out of
 	// The user data of TextBreakerAlpha
 	// Most of the work is done with Go, though sentiment analysis is done with python

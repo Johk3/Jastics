@@ -85,16 +85,21 @@ func Run(input string, output string) {
 
   // Serving the graph through the web
   fmt.Println("Serving on port 8080...")
-  http.HandleFunc("/alpha", fetchGraph)
+  http.HandleFunc("/alpha", modelF.fetchGraph)
   log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func fetchGraph (res http.ResponseWriter, req *http.Request) {
+func (m *Feedback) fetchGraph (res http.ResponseWriter, req *http.Request) {
+  var stockValues []float64
+  for i := 0; i < len(m.averageRatios); i++ {
+    stockValues = append(stockValues, float64(i))
+  }
+
   graph := chart.Chart{
     Series: []chart.Series{
       chart.ContinuousSeries{
-        XValues: []float64{1.0, 2.0, 3.0, 4.0, 5.0},
-        YValues: []float64{1.0, 2.0, 3.0, 4.0, 5.0},
+        XValues: m.averageRatios,
+        YValues: stockValues,
       },
     },
   }

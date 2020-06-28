@@ -105,8 +105,8 @@ func (m *Feedback) fetchGraph (res http.ResponseWriter, req *http.Request) {
   graph := chart.Chart{
     Series: []chart.Series{
       chart.ContinuousSeries{
-        XValues: m.averageRatios,
-        YValues: stockValues,
+        XValues: stockValues,
+        YValues: m.averageRatios,
       },
     },
   }

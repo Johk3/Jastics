@@ -101,10 +101,15 @@ func (m *Feedback) fetchGraph (res http.ResponseWriter, req *http.Request) {
   for i := 0; i < len(m.averageRatios); i++ {
     stockValues = append(stockValues, float64(i))
   }
+  fmt.Printf("Values %d %d\n", len(stockValues), len(m.averageRatios))
 
   graph := chart.Chart{
     Series: []chart.Series{
       chart.ContinuousSeries{
+        Style: chart.Style{
+          StrokeColor: chart.GetDefaultColor(0).WithAlpha(64),
+          FillColor:   chart.GetDefaultColor(0).WithAlpha(64),
+        },
         XValues: stockValues,
         YValues: m.averageRatios,
       },

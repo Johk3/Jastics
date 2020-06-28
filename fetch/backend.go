@@ -60,16 +60,23 @@ func Run(input string, output string) {
             modelF.AppendText(v.Elem().MapIndex(f).Elem().String())
           }
           if f.String() == "ratios" {
+            var avgRatios float64
+            var rDivider float64
             for z := 0; z < v.Elem().MapIndex(f).Elem().Len(); z++ {
               ratioS := v.Elem().MapIndex(f).Elem().Index(z).Elem().String()
               if ratioS == "<float64 Value>" {
                 modelF.AppendRatios(v.Elem().MapIndex(f).Elem().Index(z).Elem().Float())
+                avgRatios += v.Elem().MapIndex(f).Elem().Index(z).Elem().Float()
+                rDivider++;
               } else {
                 if s, err := strconv.ParseFloat(ratioS, 64); err == nil {
                   modelF.AppendRatios(s)
+                  avgRatios += s
+                  rDivider++;
                 }
               }
             }
+            modelF.AppendAverageRatios(avgRatios/rDivider)
           }
         }
       }
